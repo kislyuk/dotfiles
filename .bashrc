@@ -15,7 +15,42 @@ export PERL5LIB="$PERL5LIB:$HOME/lib/perl"
 export R_LIBS_USER="${HOME}/lib/R"
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/lib
 
-[ $EUID == 0 ] || export PATH="$PATH:."
+#[ $EUID == 0 ] || export PATH="$PATH:."
+
+# cleaned up platform name
+export PLATFORM="${OSTYPE//[0-9\.]}"
+
+# Setup some colors to use later in interactive shell or scripts
+export NC='\[\e[m\]' # No Color
+export BLACK='\[\e[0;30m\]'
+export GRAY='\[\e[1;30m\]'
+export RED='\[\e[0;31m\]'
+export LIGHT_RED='\[\e[1;31m\]'
+export GREEN='\[\e[0;32m\]'
+export LIGHT_GREEN='\[\e[1;32m\]'
+export BROWN='\[\e[0;33m\]'
+export YELLOW='\[\e[1;33m\]'
+export BLUE='\[\e[0;34m\]'
+export LIGHT_BLUE='\[\e[1;34m\]'
+export PURPLE='\[\e[0;35m\]'
+export LIGHT_PURPLE='\[\e[1;35m\]'
+export CYAN='\[\e[0;36m\]'
+export LIGHT_CYAN='\[\e[1;36m\]'
+export LIGHT_GRAY='\[\e[0;37m\]'
+export WHITE='\[\e[1;37m\]'
+
+if [ $PLATFORM == "darwin" ]; then
+    export GOPATH=$HOME/Code/go
+    export CC=clang
+    export CXX=clang
+    export FFLAGS=-ff2c
+    export CFLAGS=-Qunused-arguments
+    export CPPFLAGS=-Qunused-arguments
+fi
+
+export PYTHON_EGG_CACHE="/tmp"
+export GREP_OPTIONS="--color=auto"
+export CLICOLOR=1
 
 if [ "$PS1" ]; then
         PROMPT_COMMAND='history -a' #;history -n'
@@ -149,8 +184,26 @@ if [ "$PS1" ]; then
         echo -ne '\e]4;14;#2AA1A1\a'  # bold cyan
         echo -ne '\e]4;15;#fdf6e3\a'  # bold white
         
+        # virtualenvwrapper
+        export WORKON_HOME=$HOME/.virtualenvs
+        VIRTUALENV_WRAPPER=/usr/local/bin/virtualenvwrapper.sh
+        if [ -f $VIRTUALENV_WRAPPER ]; then
+            source $VIRTUALENV_WRAPPER
+        fi
+        
         # bash completion
         if [[ -z brew && $(brew --prefix)/etc/bash_completion ]]; then
-                . $(brew --prefix)/etc/bash_completion
+            . $(brew --prefix)/etc/bash_completion
+        fi
+        
+        # load additional extras if available. this generally contains platform
+        # specific components
+        if [ -f $HOME/.bashrc-extras ]; then
+            . $HOME/.bashrc-extras
+        fi
+        
+        # convenience functions
+        if [ -f $HOME/.functions ]; then
+            . $HOME/.functions
         fi
 fi
