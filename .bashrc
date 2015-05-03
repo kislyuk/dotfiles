@@ -148,4 +148,9 @@ if [ "$PS1" ]; then
         echo -ne '\e]4;13;#6C71C4\a'  # bold magenta
         echo -ne '\e]4;14;#2AA1A1\a'  # bold cyan
         echo -ne '\e]4;15;#fdf6e3\a'  # bold white
+        
+        # bash completion
+        if [[ -z brew && $(brew --prefix)/etc/bash_completion ]]; then
+                . $(brew --prefix)/etc/bash_completion
+        fi
 fi
